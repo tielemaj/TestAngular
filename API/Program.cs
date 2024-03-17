@@ -1,19 +1,14 @@
-using API.Data;
+using API.Extentions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<DataContext>(options =>
-{
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-builder.Services.AddCors();
+
+builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddAuthenticationServices(builder.Configuration);
 
 // Add services to the container.
 //builder.Services.AddEndpointsApiExplorer();
@@ -34,6 +29,9 @@ app.UseCors(builder =>
         .AllowAnyMethod()
         .WithOrigins("https://localhost:4200");
 });
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 app.Run();
