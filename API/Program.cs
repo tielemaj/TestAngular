@@ -1,4 +1,5 @@
 using API.Extentions;
+using API.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,6 +15,8 @@ builder.Services.AddAuthenticationServices(builder.Configuration);
 //builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
