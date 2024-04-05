@@ -9,9 +9,9 @@ namespace API.Extentions
             return principal.FindFirst(ClaimTypes.Name)?.Value;
         }
 
-        public static string GetUserId(this ClaimsPrincipal principal)
+        public static int GetUserId(this ClaimsPrincipal principal)
         {
-            return principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return int.Parse(principal.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         }
     }
 }
