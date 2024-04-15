@@ -38,36 +38,28 @@ namespace API.Data
 
         public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string receipientUsername)
         {
-            var messages = await _context.Messages
-                .Include(x => x.Sender).ThenInclude(x => x.Photos)
-                .Include(x => x.Receipient).ThenInclude(x => x.Photos)
+            var query = _context.Messages
                 .Where(x =>
                     (x.ReceipientUsername == currentUsername && x.SenderUsername == receipientUsername && !x.ReceipientDeleted) ||
                     (x.ReceipientUsername == receipientUsername && x.SenderUsername == currentUsername && !x.SenderDeleted)
                  )
                 .OrderBy(m => m.MessageSend)
-                .ToListAsync();
+                .AsQueryable();
 
-            var unreadMessages = messages.Where(x => x.DateRead == null && x.ReceipientUsername == currentUsername).ToList();
+            var unreadMessages = query .Where(x => x.DateRead == null && x.ReceipientUsername == currentUsername).ToList();
             if (unreadMessages.Any())
             {
                 foreach (var message in unreadMessages)
                 {
                     message.DateRead = DateTime.UtcNow;
                 }
-                await _context.SaveChangesAsync();
             }
-            return _mapper.Map<IEnumerable<MessageDto>>(messages);
+            return await query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
         public async Task<Message> GetMessge(int id)
         {
             return await _context.Messages.FindAsync(id);
-        }
-
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
         }
 
         public void AddGroup(Group group)
