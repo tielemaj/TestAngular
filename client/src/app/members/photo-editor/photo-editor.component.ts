@@ -4,9 +4,9 @@ import { FileUploader } from 'ng2-file-upload';
 import { User } from '../../_models/user';
 import { AccountService } from '../../_services/account.service';
 import { take } from 'rxjs';
-import { environment } from '../../../environments/environment.development';
 import { MembersService } from '../../_services/members.service';
 import { Photo } from '../../_models/photo';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-photo-editor',
